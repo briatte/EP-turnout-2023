@@ -88,16 +88,37 @@ egen cases = count(t), by(iso3c)
 tabstat cases if t == 1, s(n mean p50) // mean 6.25, median 6
 
 // Wooldridge autocorrelation test
+// note: won't run on actual panel structure with year gaps
 xtset cty t
 xtserial voter_turnout if cases > 2
 
-// nonstationarity (Dicky-Fuller)
+// note: for a possibly more correct result, use Wursten, "Testing for serial
+// correlation in fixed-effects panel models", Stata Journal, 2018, although
+// most of the tests will not accept a panel with gaps, or of our G = 28 size
+//
+// Inoue and Solon (2006) LM-test
+// xtistest voter_turnout, lags(1) // (does not actually find auto-correlation)
+
+// nonstationarity (Dickey-Fuller)
 // note: won't run when T < 3
+// note: same as above, won't run on actual panel structure with year gaps
+xtset cty t
 xtunitroot fisher voter_turnout if cases > 3, dfuller lags(1)
 
 // cross-sectional dependence
-// xtcsd voter_turnout // won't run, panel is too imbalanced
+xtset cty year
 xtcd2 voter_turnout
+
+// note: Pesaran (2004) test won't run, panel is too imbalanced
+// xtreg voter_turnout, re
+// xtcsd, pes
+// ... but the issue is again 'fixable' by hiding year gaps
+xtset cty t
+xtreg voter_turnout, re
+xtcsd, pes // p < 0.05
+// xtcsd, fri // dubious result
+// xtreg voter_turnout if cases > 3, re
+// xtcsd, fre
 
 cap log close
 
