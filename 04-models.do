@@ -8,6 +8,8 @@ which xttest3
 // graph scheme
 which scheme-modern.scheme
 
+cap mkdir "outputs"
+
 /* -----------------------------------------------------------------------------
    Preprocessing
    -------------------------------------------------------------------------- */
@@ -19,7 +21,7 @@ run "02-globals.do"
 xtset cty year
 
 cap log close
-cap log using "models.log"
+cap log using "outputs/models.log"
 eststo clear
 
 /* -----------------------------------------------------------------------------
@@ -84,7 +86,7 @@ eststo pw4: prais voter_turnout $eq4, vce(cl iso3c) rhotype(reg)
 // note: compare to xtpcse, c(ar1)
 
 //export main models
-esttab re? using "tbl-02-main-models.rtf", ///
+esttab re? using "outputs/tbl-02-main-models.rtf", ///
 	sca(N_g r2_w rmse) sfmt(2) ///
 	d(*year _cons) addn("Constant term and year dummies omitted.") ///
 	mti("Model 1" "Model 2" "Model 3" "Model 4") ///
@@ -107,7 +109,7 @@ eststo cv4: xtreg $cv4, re
 assert r(table)[1,7] > 0 // note: cv2 is on 7th column in Model 3
 
 forv i = 1/4 {
-	esttab re`i' cv`i' using "tbl-B`i'-cv-m`i'.rtf", ///
+	esttab re`i' cv`i' using "outputs/tbl-B`i'-cv-m`i'.rtf", ///
 		keep(cv*) rename(cv2 cv) $xprt wide noobs
 }
 
@@ -131,7 +133,7 @@ eststo fep4: xtreg $fep4, re
 assert r(table)[4,8] > 0.1 // note: first_ep is on 8th column in Model 3
 
 forv i = 1/4 {
-	esttab fep`i' using "tbl-C`i'-first_ep-m`i'.rtf", ///
+	esttab fep`i' using "outputs/tbl-C`i'-first_ep-m`i'.rtf", ///
 		keep (first_ep) $xprt wide noobs
 }
 
@@ -169,7 +171,7 @@ cap log close
 forv i = 1/4 {
 
 	esttab re`i' ols`i' fe`i' pw`i' ss1`i' ss2`i' va`i' ///
-		using "tbl-A`i'-est-m`i'.rtf", ///
+		using "outputs/tbl-A`i'-est-m`i'.rtf", ///
 		sca(rmse) sfmt(2) ///
 		indicate("Year dummies = **year") ///
 		d(*year _cons) addn("Constant term and year dummies omitted.") ///
@@ -200,7 +202,7 @@ forv i = 1/4 {
 		scheme(modern) ///
 		name(models`i', replace)
 	
-	gr export "fig-est-m`i'.png", replace
+	gr export "outputs/fig-est-m`i'.png", replace
 
 }
 
@@ -264,7 +266,7 @@ forv i = 1/4 {
 		scheme(modern) ///
 		name(cl`i', replace)
 	
-	gr export "fig-se-m`i'.png", replace
+	gr export "outputs/fig-se-m`i'.png", replace
 
 }
 
