@@ -7,6 +7,7 @@ which xtcd2
 // graph scheme
 which scheme-modern.scheme
 
+// export folder
 cap mkdir "outputs"
 
 /* -----------------------------------------------------------------------------
