@@ -22,7 +22,7 @@ run "02-globals.do"
 xtset cty year
 
 cap log close
-cap log using "outputs/models.log"
+cap log using "outputs/models.log", replace
 eststo clear
 
 /* -----------------------------------------------------------------------------
@@ -163,8 +163,6 @@ eststo va2: xtreg $va2, re
 eststo va3: xtreg $va3, re
 eststo va4: xtreg $va4, re
 
-cap log close
-
 /* -----------------------------------------------------------------------------
    Plots and tables for checks 1-4 and 7-9
    -------------------------------------------------------------------------- */
@@ -270,6 +268,8 @@ forv i = 1/4 {
 	gr export "outputs/fig-se-m`i'.png", replace
 
 }
+
+cap log close
 
 /* -----------------------------------------------------------------------------
    Other possible checks
