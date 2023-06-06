@@ -2,7 +2,8 @@
    Fig. 1 - Turnout
    -------------------------------------------------------------------------- */
 
-   loc fig1 "fig-01-turnout.png"
+loc fig1 "outputs/fig-01-turnout.png"
+
 if !(fileexists("`fig1'")) {
 	
 	tw ///
@@ -23,7 +24,8 @@ if !(fileexists("`fig1'")) {
    Fig. 2a - Rounds
    -------------------------------------------------------------------------- */
 
-loc fig2a "fig-02a-rounds.png"
+loc fig2a "outputs/fig-02a-rounds.png"
+
 if !(fileexists("`fig2a'")) {
 
 	tw (lfitci voter_turnout ne_count) ///
@@ -41,7 +43,8 @@ if !(fileexists("`fig2a'")) {
    Fig. 2b - Contests
    -------------------------------------------------------------------------- */
 
-loc fig2b "fig-02b-contests.png"
+loc fig2b "outputs/fig-02b-contests.png"
+
 if !(fileexists("`fig2b'")) {
 
 	tw (lfitci voter_turnout ne_count2) ///
