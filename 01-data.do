@@ -7,12 +7,14 @@ which xtcd2
 // graph scheme
 which scheme-modern.scheme
 
+cap mkdir "outputs"
+
 /* -----------------------------------------------------------------------------
    Data preparation
    -------------------------------------------------------------------------- */
 
 // EP elections turnout, Feb 20, 2023
-insheet using "2022-data-ep-elections.tsv", clear
+insheet using "data/2022-data-ep-elections.tsv", clear
 
 // coerce VAP turnout to numeric (missing values NA -> .)
 destring vap_turnout, force replace
@@ -53,19 +55,19 @@ gl allvars "voter_turnout vap_turnout ne_months ne_count ne_count2 lne_turnout l
 
 eststo clear
 estpost tabstat $allvars, columns(statistics) statistics(n mean sd min max)
-esttab using "tbl-01-descriptives.rtf", ///, ///
+esttab using "outputs/tbl-01-descriptives.rtf", ///, ///
 	cells("count Mean(fmt(2)) SD(fmt(2)) Min(fmt(2)) Max(fmt(2))") ///
 	lab nomti nonum noobs replace
 
 estpost cor $allvars, mat
-esttab using "tbl-03-correlations.rtf", ///
+esttab using "outputs/tbl-03-correlations.rtf", ///
 	unstack not nostar noobs nonote b(2) lab replace
 
 /* -----------------------------------------------------------------------------
    Panel structure
    -------------------------------------------------------------------------- */
 
-cap log using "tbl-00-panel-structure.log", replace
+cap log using "outputs/tbl-00-panel-structure.log", replace
 
 // group variable
 encode iso3c, gen(cty)
