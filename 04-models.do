@@ -106,7 +106,8 @@ forv i = 1/4 {
 //export main models
 esttab re? using "outputs/tbl-02-main-models.rtf", ///
 	sca(N_g r2_w rmse) sfmt(2) ///
-	d(*year _cons) addn("Constant term and year dummies omitted.") ///
+	indicate("Year dummies=**year") ///
+	d(_cons) addn("Constant term and year dummies omitted.") ///
 	mti("Model 1" "Model 2" "Model 3" "Model 4") ///
 	$xprt
 
@@ -238,8 +239,8 @@ forv i = 1/4 {
 	esttab re`i' ols`i' fe`i' pw`i' ss1`i' ss2`i' va`i' ///
 		using "outputs/tbl-A`i'-est-m`i'.rtf", ///
 		sca(rmse) sfmt(2) ///
-		indicate("Year dummies = **year") ///
-		d(*year _cons) addn("Constant term and year dummies omitted.") ///
+		indicate("Year dummies=**year") ///
+		d(_cons) addn("Constant term and year dummies omitted.") ///
 		mti("RE" "OLS" "FE" "PW" "SS1" "SS2" "VAP") ///
 		$xprt
 	
