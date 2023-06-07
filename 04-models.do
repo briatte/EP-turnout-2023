@@ -292,6 +292,11 @@ forv i = 1/4 {
 
 cap log close
 
+// note: why jackknife estimation depletes CV point estimates
+tab cty if cv == 1, su(cv2)
+tab cty if cv == 1 & concurrent == 1, su(cv2)
+tab cv concurrent, nof row exact chi2
+
 /* -----------------------------------------------------------------------------
    Other possible checks
    
