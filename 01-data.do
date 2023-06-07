@@ -9,9 +9,6 @@ which xtserial
 which xtistest
 which xtcd2
 
-// graph scheme
-which scheme-modern.scheme
-
 // export folder
 cap mkdir "outputs"
 
@@ -54,23 +51,27 @@ la var cv2 "Compulsory voting" // alt. measure
 d
 
 /* -----------------------------------------------------------------------------
-   Descriptive statistics (Table 1)
+   Descriptive statistics (Tables 1 and A2)
    -------------------------------------------------------------------------- */
 
-gl allvars "voter_turnout vap_turnout ne_months ne_count ne_count2 lne_turnout lne_fo concurrent cv"
+gl vars "voter_turnout vap_turnout"
+gl vars "$vars ne_months ne_count ne_count2 lne_turnout lne_fo concurrent cv"
 
 eststo clear
-estpost tabstat $allvars, columns(statistics) statistics(n mean sd min max)
+
+// descriptives
+estpost tabstat $vars, columns(statistics) statistics(n mean sd min max)
 esttab using "outputs/tbl-01-descriptives.rtf", ///, ///
 	cells("count Mean(fmt(2)) SD(fmt(2)) Min(fmt(2)) Max(fmt(2))") ///
 	lab nomti nonum noobs replace
 
-estpost cor $allvars, mat
+// correlations
+estpost cor $vars, mat
 esttab using "outputs/tbl-03-correlations.rtf", ///
 	unstack not nostar noobs nonote b(2) lab replace
 
 /* -----------------------------------------------------------------------------
-   Panel structure
+   Panel structure and tests
    -------------------------------------------------------------------------- */
 
 cap log using "outputs/tbl-00-panel-structure.log", replace
@@ -79,7 +80,7 @@ cap log using "outputs/tbl-00-panel-structure.log", replace
 encode iso3c, gen(cty)
 sort iso3c year
 
-// time index
+// time index (serializes the election years)
 by iso3c: gen t = _n
 
 // panel structure
@@ -96,6 +97,7 @@ tabstat cases if t == 1, s(n mean p50) // mean 6.25, median 6
 // note: won't run on actual panel structure with year gaps
 xtset cty t
 xtserial voter_turnout if cases > 2
+assert r(p) < 0.05
 
 // Inoue-Solon autocorrelation test (on unbalanced panel)
 // note: fails to find serial correlation on actual panel structure with gaps
@@ -106,9 +108,9 @@ assert r(pvalue1) < 0.05
 xtistest voter_turnout, lags(2)
 assert r(pvalue1) > 0.05
 
-// nonstationarity (Dickey-Fuller)
+// Fisher-type, augmented Dickey-Fuller nonstationarity test
 // note: won't run when T < 3
-// note: same as above, won't run on actual panel structure with year gaps
+// note: won't run on actual panel structure with year gaps
 xtset cty t
 xtunitroot fisher voter_turnout if cases > 3, dfuller lags(1)
 

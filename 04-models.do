@@ -97,7 +97,7 @@ eststo pw1: prais voter_turnout $eq1, vce(cl iso3c) rhotype(reg)
 eststo pw2: prais voter_turnout $eq2, vce(cl iso3c) rhotype(reg)
 eststo pw3: prais voter_turnout $eq3, vce(cl iso3c) rhotype(reg)
 eststo pw4: prais voter_turnout $eq4, vce(cl iso3c) rhotype(reg)
-// note: compare to xtpcse, c(ar1)
+// note: for PCSE, compare to `xtpcse, c(ar1)`
 
 //export main models
 esttab re? using "outputs/tbl-02-main-models.rtf", ///
