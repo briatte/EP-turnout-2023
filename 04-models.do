@@ -6,6 +6,7 @@
 
 which estout
 which coefplot
+which xtcsd
 which xtistest
 which xttest3
 
@@ -47,18 +48,19 @@ eststo fe2: xtreg $rv2, fe
 eststo fe3: xtreg $rv3, fe
 eststo fe4: xtreg $rv4, fe
 
-// test for year dummies requirement
 // linear hypothesis test for year dummies
 forv i = 1/4 {
-	est restore fe`i'
-	testparm i.year
 	qui est restore fe`i'
 	qui testparm i.year
 	assert r(p) < 0.05
 }
-// note: Breusch-Pagan LM test cannot be run (panel is too imbalanced)
+// Pesaran test for cross-sectional independence
+// note: won't run on actual panel structure with year gaps
+xtset cty t
 forv i = 1/4 {
 	qui est restore fe`i'
+	qui xtcsd, pes
+	assert r(p) > 0.05 // accept H0
 }
 
 // random effects
