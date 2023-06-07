@@ -249,6 +249,11 @@ eststo fe1cl: xtreg $rv1, fe vce(cl cty)
 eststo fe2cl: xtreg $rv2, fe vce(cl cty)
 eststo fe3cl: xtreg $rv3, fe vce(cl cty)
 eststo fe4cl: xtreg $rv4, fe vce(cl cty)
+// note: see below for Driscoll-Kraay errors instead (v. similar results)
+forv i = 1/4 {
+	qui xi: eststo fe`i'dk: xtscc ${rv`i'}, fe
+	esttab fe`i' fe`i'cl fe`i'dk, drop(*year _I*) $scrn
+}
 
 forv i = 1/4 {
 	
