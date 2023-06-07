@@ -23,7 +23,11 @@ if _rc == 111 {
 	net install st0536
 }
 
+// xtistest
+cap which xtistest
 if _rc == 111 {
+	net sj 18-1 st0514
+	net install st0514
 }
 
 // xtserial

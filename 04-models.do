@@ -6,6 +6,7 @@
 
 which estout
 which coefplot
+which xtistest
 which xttest2
 which xttest3
 
@@ -51,6 +52,12 @@ forv i = 1/4 {
 	testparm i.year
 	assert r(p) < 0.05
 }
+// note: Breusch-Pagan LM test cannot be run (panel is too imbalanced)
+forv i = 1/4 {
+	qui est restore fe`i'
+	qui xttest2
+	di "Model `i': `r(n_bp)' complete obs."
+}
 
 // random effects + Breusch-Pagan test to reject pooled OLS
 eststo re1: xtreg $rv1, re
@@ -69,6 +76,13 @@ eststo re4: xtreg $rv4, re
 xttest0
 assert r(p) < 0.01
 
+// test for absence of serial correlation in residuals
+forv i = 1/4 {
+	qui est restore re`i'
+	cap predict re`i'_e, e
+	xtistest re`i'_e, lags(1)
+	assert r(pvalue1) > 0.05
+}
 // note: Hausman test cannot be relied on (assumptions unmet)
 forv i = 1/4 {
 	hausman fe`i' re`i'

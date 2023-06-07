@@ -6,6 +6,7 @@
 
 which estout
 which xtserial
+which xtistest
 which xtcd2
 
 // graph scheme
@@ -96,12 +97,14 @@ tabstat cases if t == 1, s(n mean p50) // mean 6.25, median 6
 xtset cty t
 xtserial voter_turnout if cases > 2
 
-// note: for a possibly more correct result, use Wursten, "Testing for serial
-// correlation in fixed-effects panel models", Stata Journal, 2018, although
-// most of the tests will not accept a panel with gaps, or of our G = 28 size
-//
-// Inoue and Solon (2006) LM-test
-// xtistest voter_turnout, lags(1) // (does not actually find auto-correlation)
+// Inoue-Solon autocorrelation test (on unbalanced panel)
+// note: fails to find serial correlation on actual panel structure with gaps
+xtset cty t
+xtistest voter_turnout, lags(1)
+assert r(pvalue1) < 0.05
+// no second-order autocorrelation
+xtistest voter_turnout, lags(2)
+assert r(pvalue1) > 0.05
 
 // nonstationarity (Dickey-Fuller)
 // note: won't run when T < 3
