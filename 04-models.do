@@ -7,7 +7,6 @@
 which estout
 which coefplot
 which xtistest
-which xttest2
 which xttest3
 
 // graph scheme
@@ -56,8 +55,6 @@ forv i = 1/4 {
 // note: Breusch-Pagan LM test cannot be run (panel is too imbalanced)
 forv i = 1/4 {
 	qui est restore fe`i'
-	qui xttest2
-	di "Model `i': `r(n_bp)' complete obs."
 }
 
 // random effects + Breusch-Pagan test to reject pooled OLS

@@ -38,7 +38,6 @@ if _rc == 111 {
 }
 
 // xttest2
-// xttest3
 cap which xttest2
 cap which xttest3
 if _rc == 111 {
