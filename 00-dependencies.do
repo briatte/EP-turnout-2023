@@ -23,11 +23,7 @@ if _rc == 111 {
 	net install st0536
 }
 
-// xtcsd (not used)
-cap which xtcsd
 if _rc == 111 {
-	net sj 6-4 st0113
-	net install st0113
 }
 
 // xtserial

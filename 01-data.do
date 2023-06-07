@@ -113,17 +113,6 @@ xtunitroot fisher voter_turnout if cases > 3, dfuller lags(1)
 xtset cty year
 xtcd2 voter_turnout
 
-// note: Pesaran (2004) test won't run, panel is too imbalanced
-// xtreg voter_turnout, re
-// xtcsd, pes
-// ... but the issue is again 'fixable' by hiding year gaps
-xtset cty t
-xtreg voter_turnout, re
-xtcsd, pes // p < 0.05
-// xtcsd, fri // dubious result
-// xtreg voter_turnout if cases > 3, re
-// xtcsd, fre
-
 cap log close
 
 // lagged DV (not used, small T)
