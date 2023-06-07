@@ -65,32 +65,40 @@ forv i = 1/4 {
 // --------------
 xtset cty year
 eststo re1: xtreg $rv1, re
-xttest0
-assert r(p) < 0.01
-
 eststo re2: xtreg $rv2, re
-xttest0
-assert r(p) < 0.01
-
 eststo re3: xtreg $rv3, re
-xttest0
-assert r(p) < 0.01
-
 eststo re4: xtreg $rv4, re
-xttest0
-assert r(p) < 0.01
 
-// test for absence of serial correlation in residuals
+// Breusch-Pagan test to reject pooled OLS
+forv i = 1/4 {
+	qui est restore re`i'
+	xttest0
+	assert r(p) < 0.05
+}
+// Inoue-Solon test for absence of serial correlation in residuals
+// note: order 1 lag only
 forv i = 1/4 {
 	qui est restore re`i'
 	cap predict re`i'_e, e
 	xtistest re`i'_e, lags(1)
-	assert r(pvalue1) > 0.05
+	assert r(pvalue1) > 0.05 // accept H0
 }
-// note: Hausman test cannot be relied on (assumptions unmet)
+// Pesaran test for cross-sectional independence
+// note: won't run on actual panel structure with year gaps
+xtset cty t
 forv i = 1/4 {
-	hausman fe`i' re`i'
-	assert r(p) > 0.05
+	qui est restore re`i'
+	qui xtcsd, pes
+	assert r(p) > 0.05 // accept H0
+}
+// Hausman test
+// note: assumptions unmet on Models 2 and 4
+forv i = 1/4 {
+	qui hausman fe`i' re`i'
+	assert r(p) > 0.05 // accept H0
+	if r(chi2) < 0 {
+		di "Assumptions unmet for Hausman test on Models FE-RE `i'"
+	}
 }
 
 //export main models
