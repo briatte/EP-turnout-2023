@@ -22,7 +22,8 @@ cap mkdir "outputs"
 
 run "00-dependencies.do"
 run "01-data.do"
-run "02-globals.do"
+run "02-plots.do"
+run "03-globals.do"
 
 xtset cty year
 
