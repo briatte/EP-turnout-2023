@@ -24,8 +24,6 @@ run "01-data.do"
 run "02-plots.do"
 run "03-globals.do"
 
-xtset cty year
-
 cap log close
 cap log using "outputs/models.log", replace
 eststo clear
@@ -35,21 +33,27 @@ eststo clear
    -------------------------------------------------------------------------- */
 
 // pooled OLS, clustered SEs
+// -------------------------
 eststo ols1: reg $rv1 , vce(cl cty)
 eststo ols2: reg $rv2 , vce(cl cty)
 eststo ols3: reg $rv3 , vce(cl cty)
 eststo ols4: reg $rv4 , vce(cl cty)
 
 // fixed effects
+// -------------
+xtset cty year
 eststo fe1: xtreg $rv1, fe
 eststo fe2: xtreg $rv2, fe
 eststo fe3: xtreg $rv3, fe
 eststo fe4: xtreg $rv4, fe
 
 // test for year dummies requirement
+// linear hypothesis test for year dummies
 forv i = 1/4 {
 	est restore fe`i'
 	testparm i.year
+	qui est restore fe`i'
+	qui testparm i.year
 	assert r(p) < 0.05
 }
 // note: Breusch-Pagan LM test cannot be run (panel is too imbalanced)
@@ -57,7 +61,9 @@ forv i = 1/4 {
 	qui est restore fe`i'
 }
 
-// random effects + Breusch-Pagan test to reject pooled OLS
+// random effects
+// --------------
+xtset cty year
 eststo re1: xtreg $rv1, re
 xttest0
 assert r(p) < 0.01
@@ -174,7 +180,7 @@ eststo va3: xtreg $va3, re
 eststo va4: xtreg $va4, re
 
 /* -----------------------------------------------------------------------------
-   Plots and tables for checks 1-4 and 7-9
+   Plots and tables for checks 1-4 (PW only) and 7-9 (FEP, SS1, SS2, VAP)
    -------------------------------------------------------------------------- */
 
 forv i = 1/4 {
@@ -219,7 +225,7 @@ forv i = 1/4 {
    (10-11) Jackknife estimation and country-level clustered standard errors
    -------------------------------------------------------------------------- */
 
-// note: heteroskedasticity in all FE models
+// heteroskedasticity in all FE models
 forv i = 1/4 {
 	qui est restore fe`i'
 	qui xttest3
