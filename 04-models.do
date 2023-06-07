@@ -89,12 +89,6 @@ forv i = 1/4 {
 	hausman fe`i' re`i'
 	assert r(p) > 0.05
 }
-// note: Breusch-Pagan LM test cannot be run (panel is too imbalanced)
-forv i = 1/4 {
-	qui est restore fe`i'
-	qui xttest2
-	di "Model `i': `r(n_bp)' complete obs."
-}
 
 // Prais-Winsten (no year dummies)
 tsset cty year
