@@ -93,21 +93,61 @@ forv i = 1/4 {
 	assert r(p) > 0.05
 }
 
-// Prais-Winsten (no year dummies)
-tsset cty year
-
-eststo pw1: prais voter_turnout $eq1, vce(cl iso3c) rhotype(reg)
-eststo pw2: prais voter_turnout $eq2, vce(cl iso3c) rhotype(reg)
-eststo pw3: prais voter_turnout $eq3, vce(cl iso3c) rhotype(reg)
-eststo pw4: prais voter_turnout $eq4, vce(cl iso3c) rhotype(reg)
-// note: for PCSE, compare to `xtpcse, c(ar1)`
-
 //export main models
 esttab re? using "outputs/tbl-02-main-models.rtf", ///
 	sca(N_g r2_w rmse) sfmt(2) ///
 	d(*year _cons) addn("Constant term and year dummies omitted.") ///
 	mti("Model 1" "Model 2" "Model 3" "Model 4") ///
 	$xprt
+
+// Prais-Winsten (clustered SEs)
+// -----------------------------
+forv i = 1/4 {
+	// remove year dummies from equation
+	gl pw`i' = regexr("${rv`i'}", "i.year", "")
+}
+xtset cty year
+eststo pw1: prais $pw1, vce(cl cty) rhotype(reg)
+eststo pw2: prais $pw2, vce(cl cty) rhotype(reg)
+eststo pw3: prais $pw3, vce(cl cty) rhotype(reg)
+eststo pw4: prais $pw4, vce(cl cty) rhotype(reg)
+
+// compare with `xtpcse` estimation, and show estimates with year dummies
+// included alongside the AR(1) term
+forv i = 1/4 {
+	xtset cty year
+	eststo pcse`i': xtpcse ${pw`i'}, c(ar1)
+	// serialize years
+	xtset cty t
+	eststo pw`i'yd: prais ${rv`i'}, vce(cl cty) rhotype(reg)
+	eststo pcse`i'yd: xtpcse ${rv`i'}, c(ar1)
+}
+forv i = 1/4 {
+
+	// RE and FE models included for reference
+	coefplot ///
+		(re`i', if(@ll<0 & @ul>0)) ///
+		(re`i', if(@ll>0 | @ul<0)) || ///
+		(fe`i', if(@ll<0 & @ul>0)) ///
+		(fe`i', if(@ll>0 | @ul<0)) || ///
+		(pw`i', if(@ll<0 & @ul>0)) ///
+		(pw`i', if(@ll>0 | @ul<0)) || ///
+		(pcse`i', if(@ll<0 & @ul>0)) ///
+		(pcse`i', if(@ll>0 | @ul<0)) || ///
+		(pw`i'yd, if(@ll<0 & @ul>0)) ///
+		(pw`i'yd, if(@ll>0 | @ul<0)) || ///
+		(pcse`i'yd, if(@ll<0 & @ul>0)) ///
+		(pcse`i'yd, if(@ll>0 | @ul<0)) || ///
+		, nooffset drop(_cons *.year) ///
+		xlabel(1 "RE" 2 "FE" 3 "PW" 4 "PCSE" 5 "PWt" 6 "PCSEt") ///
+		bycoef byopts(yrescale legend(off)) vertical yline(0) grid(none) ///
+		subtitle(, size(small) color(gs0) bcolor(gs14)) ///
+		p1(mcolor(gs8) ciopts(lcolor(gs8))) ///
+		p2(mcolor(gs0) ciopts(lcolor(gs0))) ///
+		scheme(modern) ///
+		name(pw_pcse`i', replace)
+
+}
 
 /* -----------------------------------------------------------------------------
    (5) Alternative CV predictor (checking for positive effect)
