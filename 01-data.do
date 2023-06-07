@@ -74,7 +74,8 @@ esttab using "outputs/tbl-03-correlations.rtf", ///
    Panel structure and tests
    -------------------------------------------------------------------------- */
 
-cap log using "outputs/tbl-00-panel-structure.log", replace
+cap log close
+cap log using "outputs/log-01-data.log", replace
 
 // group variable
 encode iso3c, gen(cty)

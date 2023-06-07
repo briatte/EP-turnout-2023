@@ -26,7 +26,7 @@ run "02-plots.do"
 run "03-globals.do"
 
 cap log close
-cap log using "outputs/models.log", replace
+cap log using "outputs/log-02-models.log", replace
 eststo clear
 
 /* -----------------------------------------------------------------------------
