@@ -7,7 +7,7 @@
    -------------------------------------------------------------------------- */
 
 // screen view (not used)
-gl scrn "b(2) not wide compress nodep nocons"
+gl scrn "b(2) se(2) compress nodep nocons"
 // variable sorting order
 gl srtd "order(ne_months lne_fo lne_fo_x_ne_months ne_count ne_count2 concurrent lne_turnout cv first_ep *.year)"
 gl scrn "$scrn $srtd"
