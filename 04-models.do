@@ -71,6 +71,15 @@ eststo re2: xtreg $rv2, re
 eststo re3: xtreg $rv3, re
 eststo re4: xtreg $rv4, re
 
+// residuals-versus-fitted plots
+forv i = 1/4 {
+	qui est restore re`i'
+	cap drop yhat
+	predict yhat, xb
+	cap drop r
+	predict r, e
+	sc r yhat, name(rvf`i', replace) ms(i) mlab(cty)
+}
 // Breusch-Pagan test to reject pooled OLS
 forv i = 1/4 {
 	qui est restore re`i'
