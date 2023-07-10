@@ -68,6 +68,17 @@ if !(fileexists("`fig2b'")) {
 
 }
 
+/* -----------------------------------------------------------------------------
+   Fig. X - Time since last national election (not saved
+   -------------------------------------------------------------------------- */
+
+* tw (lfitci voter_turnout ne_months) ///
+* 	(sc voter_turnout ne_months, color(gs8)), ///
+* 	yti("Voter turnout (% registered)") ///
+* 	legend(off) ///
+* 	scheme(modern) ///
+* 	name(ne_months, replace)
+
 // draft
 //
 // yti("") ylab(none) yticks(none) legend(off) ///
